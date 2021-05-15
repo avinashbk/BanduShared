@@ -1,0 +1,240 @@
+﻿(**
+	Handler: 
+		DomainsUtil.addDomainConfigItemDefinition(key, description, domain)
+	
+	Description: 
+          	To create new domain configuration item definition
+	
+	Parameters:
+		key - key to be entered
+           	domain -  domain to be selected to get associated
+            	description - description to be entered
+		 
+	Returns: n/a
+**)
+to addDomainConfigItemDefinition key, description, domain
+	set tabsAreaSR to ORNScreen.scale(0, .05, 1, .2)
+	Click text:"Definitions",SearchRectangle:tabsAreaSR
+	Click text:"Domain Configuration Item",SearchRectangle:tabsAreaSR
+	Click text:"New Domain Configuration Item", SearchRectangle:ORNScreen.scale(.7, 0, 1, .3)
+	waitfor 10, text:"Domain Configuration Item Definition Details"
+	BanduUtil.enterFieldValue "Key", key
+	BanduUtil.enterFieldValue "Description", description
+	click ImageLocation(text:"Domain",SearchRectangle:ORNScreen.scale(0,.40,.5,1))+(700,0)
+	TypeText domain
+	TypeText returnKey
+	click ImageLocation(text:"Type",SearchRectangle:ORNScreen.scale(0,.40,.5,1))+(400,0)
+	TypeText Json
+	TypeText returnKey
+	Click text:"Create Domain configuration item definition",SearchRectangle:ORNScreen.scale(0,.5,.5,1), waitfor:30 
+end addDomainConfigItemDefinition
+
+(**
+	Handler: 
+		DomainsUtil.addDomainConfigItem(domain, definition, value)
+	
+	Description: 
+                To create new domain configuration item
+	
+	Parameters:
+		domain - domain to be selected to get associated
+           	definition -  definition to be entered
+          	value - json value to be given
+		 
+	Returns: n/a
+**)
+to addDomainConfigItem domain, definition, value
+	set tabsAreaSR to ORNScreen.scale(0, .05, 1, .2)
+	Click text:"Configuration Items"
+	Click text:"Domain Configuration Items",SearchRectangle:tabsAreaSR
+	Click text:"New Domain Configuration Item", SearchRectangle:ORNScreen.scale(.7, 0, 1, .3)
+	click ImageLocation(text:"Domain",SearchRectangle:ORNScreen.scale(0,.24,.5,1))+(700,0)
+	TypeText domain
+	TypeText returnKey
+	click ImageLocation(text:"Definition",SearchRectangle:ORNScreen.scale(0,.3,.5,1))+(400,0)
+	TypeText definition
+	TypeText returnKey
+	click ImageLocation(text:"Value",SearchRectangle:ORNScreen.scale(0,.3,.5,1))+(400,0)
+	TypeText JSONFormat(value)
+	click text:"Create Domain configuration item",SearchRectangle:ORNScreen.scale(0,.45,.5,1), waitfor:30 
+end addDomainConfigItem
+
+(**
+	Handler: 
+		DomainsUtil.deleteDomainConfigItem(domain)
+	
+	Description: 
+           	To delete created domain configuration item
+	
+	Parameters:
+		domain - domain to be entered to delete particular domain configuration item
+		 
+	Returns: n/a
+**)
+to deleteDomainConfigItem domain
+	set tabsAreaSR to ORNScreen.scale(0, .05, 1, .2)
+	Click text:"Configuration Items"
+	Click text:"Domain Configuration Items",SearchRectangle:tabsAreaSR
+	click imagelocation(text:"DOMAIN",SearchRectangle:ORNScreen.scale(.83,.22,1,1))+(0,10)
+	TypeText domain
+	TypeText returnKey
+	Click "Bandu/Domain_Migration_Filter"
+	waitFor 30, text:"Download: CSV XML JSON"
+	click text:"Delete",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	waitFor 30, text:"Are you sure you want to delete this?"
+	click imagelocation(text:"Are you sure you want to delete this?",SearchRectangle:ORNScreen.scale(0, .05, 1, .2))+(200,40)
+end deleteDomainConfigItem
+
+(**
+	Handler: 
+		DomainsUtil.editDomainConfigItem(domain, definition, value)
+	
+	Description: 
+           	Edits a created domain configuration item
+	
+	Parameters:
+		domain - domain to be selected to get associated
+           	definition -  definition to be entered
+          	value - value to be given
+		 
+	Returns: n/a
+**)
+to editDomainConfigItem domain, definition, value
+
+	set tabsAreaSR to ORNScreen.scale(0, .05, 1, .2)
+	Click text:"Configuration Items"
+	Click text:"Domain Configuration Items",SearchRectangle:tabsAreaSR
+	click imagelocation(text:"DOMAIN",SearchRectangle:ORNScreen.scale(.83, .22, 1, 1))+(0,10)
+	TypeText domain
+	TypeText returnKey
+	Click "Bandu/Domain_Migration_Filter"
+	waitFor 30, text:"Download: CSV XML JSON"
+	click text:"Edit",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	click ImageLocation(text:"Domain",SearchRectangle:ORNScreen.scale(0,.24,.5,1))+(700,0)
+	TypeText domain
+	TypeText returnKey
+	click ImageLocation(text:"Definition",SearchRectangle:ORNScreen.scale(0,.3,.5,1))+(400,0)
+	TypeText definition
+	TypeText returnKey
+	click ImageLocation(text:"Value",SearchRectangle:ORNScreen.scale(0,.3,.5,1))+(400,0)
+	KeyDown ControlKey, "a"
+	KeyUp ControlKey
+	TypeText JSONFormat(value)
+	click text:"Update Domain configuration item",SearchRectangle:ORNScreen.scale(0,.45,.5,1), waitfor:30 
+	
+end editDomainConfigItem
+
+(**
+	Handler: 
+		DomainsUtil.deleteDomainConfigItemDef(key)
+	
+	Description: 
+          	To delete created domain configuration item definition
+	
+	Parameters:
+		key - key to be entered to delete particular domain configuration item definition
+		 
+	Returns: n/a
+**)
+to deleteDomainConfigItemDefinition key
+	set tabsAreaSR to ORNScreen.scale(0, .05, 1, .2)
+	Click text:"Definitions",SearchRectangle:tabsAreaSR
+	Click text:"Domain Configuration Item",SearchRectangle:ORNScreen.scale(.2, .12, 1, .2)
+	click imagelocation(text:"Key",SearchRectangle:ORNScreen.scale(.83,.20,1,1))+(100,0)
+	TypeText key
+	Click "Bandu/Domain_Migration_Filter"
+	waitFor 30, text:"Download: CSV XML JSON"
+	click text:"Delete",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	click imagelocation(text:"Are you sure you want to delete this?",SearchRectangle:ORNScreen.scale(0, .05, 1, .2))+(200,40)
+end deleteDomainConfigItemDefinition
+
+(**
+	Handler: 
+		DomainsUtil.createDomain(keyVal, nameVal, appIDVal, parentVal)
+
+	Description: 
+		This handler creates a domain.
+
+	Parameters:
+		keyVal - Parameter set for the field key
+		nameVal - Parameter set for the field name
+		appIDVal - Parameter set for the field application ID
+		parentVal - Parameter set for the field parent
+
+	Returns: n/a
+**)
+to createDomain keyVal, nameVal, appIDVal, parentVal
+	if parentVal is not empty
+		BanduUtil.selectDropDownValue "Parent", parentVal
+	end if
+	BanduUtil.enterFieldValue "Key", keyVal
+	BanduUtil.enterFieldValue "Name", nameVal
+	BanduUtil.enterFieldValue "Description", "Eggplant_AUT_Domain_Filter_"&nameVal
+	BanduUtil.enterFieldValue "Display Name", "Eggplant_AUT_Domain_Filter_"&nameVal
+	BanduUtil.enterFieldValue "Emails", "Eggplant_AUT_Domain_Filter_"&nameVal
+	TypeText returnKey
+	TypeText pageDown
+	set appIDVal to  "["&&quote&appIDVal&&quote&"]"
+	BanduUtil.enterFieldValue "Application IDs", appIDVal
+	BanduUtil.enterFieldValue "Path", "/Eggplant_AUT_Domain_Filter_"&nameVal
+	Click text:"Create Domain",SearchRectangle:ORNScreen.scale(0,.7,.5,1), waitfor:30
+end createDomain
+
+(**
+	Handler: 
+		DomainsUtil.deleteDomain(domainKey)
+	
+	Description: 
+          	Displays a popup for delete when trying to delete a domain
+	
+	Parameters:
+		domainKey - name of the condition for which rectangle would be set in summary view
+		 
+	Returns: n/a
+**)
+to deleteDomain domainKey
+	//open edit screen for the domain
+	click text:"Edit",SearchRectangle:BanduUtil.getDomainSummaryRowSearchArea(domainKey)
+	waitfor ORNInterval.medium, text:"Parent"
+	TypeText pageDown
+	click ImageLocation(text:"Application ID",SearchRectangle:ORNScreen.scale(0,0,.5,1))+(700,0)
+	TypeText controlKey & "a" 
+	TypeText deleteKey
+	Click text:"Update Domain",SearchRectangle:ORNScreen.scale(0,0.7,.4,1)
+	waitfor ORNInterval.medium, text :"Domain was successfully updated",SearchRectangle:ORNScreen.scale(0,0,.4,.4)
+	click text:"Delete Domain",SearchRectangle:ORNScreen.scale(.5,0,1,.4)
+	waitfor ORNInterval.medium, image:"Button_OK" ,SearchRectangle:ORNScreen.scale(.3,0,.7,.4)
+end deleteDomain
+
+(**
+	Handler: 
+		DomainsUtil.openNewDomainPage
+	
+	Description: 
+          	To open new domain page
+		 
+	Returns: n/a
+**)
+to openNewDomainPage
+	Click text:"Domains", SearchRectangle:ORNScreen.scale(0, .05, 1, .2)
+	Click text:"New Domain", SearchRectangle:ORNScreen.scale(.7, 0, 1, .3), WaitFor:ORNInterval.medium
+end openNewDomainPage
+
+(**
+		DomainsUtil.updateDomain(parentVal)
+	
+	Description: 
+          	This handler edits a domain
+	
+	Parameters:
+		parentVal - name of the domain key
+		 
+	Returns: n/a
+**)
+to updateDomain parentVal
+	if parentVal is not empty
+		BanduUtil.selectDropDownValue "Parent", parentVal
+		TypeText pageDown
+		Click text:"Update Domain",SearchRectangle:ORNScreen.scale(0,.7,.5,1), waitfor:ORNInterval.medium
+	end if
+end updateDomain

@@ -1,0 +1,108 @@
+﻿
+(**
+	Handler: 
+		CapabilityDefinitions.navigateToCapabilityDefinitions
+	
+	Description: 
+		To navigate to capability definitions by clicking Definitions on the menu.
+	
+	Parameters: n/a		
+				
+	Returns: n/a
+**)
+to navigateToCapabilityDefinitions
+	Click Image:"Bandu/Button_Definitions_Menu", SearchRectangle:ORNScreen.scale(.15, .05, .8, .2), WaitFor:10
+	click (Text:"Capability Definitions", IgnoreSpaces:"Yes", IgnoreNewLines:"Yes", EnableAggressiveTextExtraction:"Yes", ValidWords:"*", EnhanceLocalContrast:"Yes", waitfor: 10)
+end navigateToCapabilityDefinitions 
+
+(**
+	Handler: 
+		CapabilityDefinitions.addNewCapabilityDefinition capabilityName, capabilityType
+	
+	Description: 
+		Create new capability definition 
+	
+	Parameters:
+		capabilityName - name of the capability definition to create
+		capabilityType - type of capability definition Ex: boolean, integer listed in drop down
+
+	Returns: n/a
+**)
+to addNewCapabilityDefinition capabilityName, capabilityType
+	CapabilityDefinitions.navigateToCapabilityDefinitions
+	Click text:"New Capability Definition", SearchRectangle:ORNScreen.scale(.75, .05, 1, .2), WaitFor:10	
+	BanduUtil.enterFieldValue Key, capabilityName
+	BanduUtil.enterFieldValue Description, "Capability Description"	
+	click "Bandu/DropDown_Type"	
+	Click text:capabilityType, SearchRectangle:ORNScreen.scale(.1, .5, .3, .7), WaitFor:10	
+	Click text:"Create Capability definition", SearchRectangle:ORNScreen.scale(.005, .55, .3, .7), WaitFor:10		
+end addNewCapabilityDefinition	
+
+(**
+	Handler: 
+		CapabilityDefinitions.editCapabilityDefinition capabilityType
+	
+	Description: 
+		Edit capability definition - this handler will edit capability definition from capability definition created page only
+	
+	Parameters:
+		capabilityType - capability type to change. Options: Boolean/Integer/Json/String
+		
+	Returns: n/a
+**)
+to editCapabilityDefinition capabilityType	
+	click "Bandu/DropDown_Type"	
+	Click text:capabilityType, validCharacters:"*", SearchRectangle:ORNScreen.scale(.1, .5, .3, .7), WaitFor:10	
+	Click text:"Update Capability definition", validCharacters:"*", SearchRectangle:ORNScreen.scale(.005, .55, .3, .7), WaitFor:10			
+end editCapabilityDefinition
+
+(**
+	Handler: 
+		CapabilityDefinitions.deleteCapabilityDefinition
+	
+	Description: 
+		Delete capability definition - this handler will delete capability definition from capability definition created page only
+	
+	Parameters: n/a
+		
+	Returns: n/a
+**)
+to deleteCapabilityDefinition
+	Click text:"Delete Capability Definition", validCharacters:"*", SearchRectangle:ORNScreen.scale(.75, .05, 1, .2), WaitFor:10
+	CapabilityDefinitions.confirmDeleteCapDefinition	
+end deleteCapabilityDefinition
+
+(**
+	Handler: 
+		CapabilityDefinitions.confirmDeleteCapDefinition
+	
+	Description: 
+		This handler will clicks on OK button when it prompts for confirmation to delete capability definition
+	
+	Parameters: n/a
+		
+	Returns: n/a
+**)
+to confirmDeleteCapDefinition
+	if ImageFound(text:"Are you sure you want to delete this?", validCharacters:"*", SearchRectangle:ORNScreen.scale(.35, .005, .65, .2), waitFor:10) then
+		Click image:"Bandu/Button_OK", SearchRectangle:ORNScreen.scale(.35, .005, .65, .2)
+	end if
+end confirmDeleteCapDefinition
+
+(**	
+	Handler: 
+		CapabilityDefinitions.destroyCapDefinition capDefName
+	
+	Description: 
+		Destroy capability definition for rerunning the test with same names. 
+	
+	Parameters:
+		capDefName - Name of capability definition 
+				
+	Returns: n/a
+**)
+to destroyCapDefinition capDefName
+	CapabilityDefinitions.navigateToCapabilityDefinitions
+	BanduUtil.applyFilter KEY, Contains, capDefName
+	BanduUtil.viewEditDeleteSummaryOptions capDefName, "Delete"
+end destroyCapDefinition	

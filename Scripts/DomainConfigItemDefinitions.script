@@ -1,0 +1,99 @@
+﻿
+(**
+	Handler: 
+		DomainConfigItemDefinitions.navigateToDomainConfigItemDefinitions
+	
+	Description: 
+		To navigate to domain config item definitions capability definitions by clicking Definitions on the menu.
+	
+	Parameters: n/a		
+
+	Returns: n/a
+**)
+to navigateToDomainConfigItemDefinitions
+	Click Image:"Bandu/Button_Definitions_Menu", SearchRectangle:ORNScreen.scale(.15, .05, .8, .2), WaitFor:10
+	click (Text:"Domain Configuration Item Definitions", IgnoreSpaces:"Yes", IgnoreNewLines:"Yes", EnableAggressiveTextExtraction:"Yes", EnhanceLocalContrast:"Yes", waitfor: 10)
+end navigateToDomainConfigItemDefinitions
+
+(**
+	Handler: 
+		DomainConfigItemDefinitions.addNewDomainConfigItemDefinition configName, configType
+	
+	Description: 
+		Create new config item definition
+	
+	Parameters:
+		configName - name of the configuration item definition to create
+		configType - type of configuration item Ex: boolean, integer listed in drop down
+
+	Returns: n/a
+**)
+to addNewDomainConfigItemDefinition configName, configType
+	DomainConfigItemDefinitions.navigateToDomainConfigItemDefinitions
+	Click text:"New Domain Configuration Item Definition", validCharacters:"*", DPI:200, SearchRectangle:ORNScreen.scale(.75, .05, 1, .2), WaitFor:10
+	BanduUtil.enterFieldValue Key, configName
+	BanduUtil.enterFieldValue Description, "Capability Description"
+	click "Bandu/DropDown_Type"	
+	Click text:configType,  validCharacters:"*", SearchRectangle:ORNScreen.scale(.1, .5, .3, .7), WaitFor:10	
+	click Image: "Bandu/Text_Domain"
+	typetext "Automation Master"
+	click FoundImageLocation()+(0,65)	
+	wait 4 //This wait period is required to so that text domain loads properly.
+	Click text:"Create Domain configuration item definition",  validCharacters:"*", SearchRectangle:ORNScreen.scale(.005, .55, .3, .7), WaitFor:ORNInterval.short		
+end addNewDomainConfigItemDefinition
+
+(**
+	Handler: 
+		DomainConfigItemDefinitions.editDomainConfigItemDefinition capabilityType
+	
+	Description: 
+		Edit domain config item definition 
+	
+	Parameters: 
+		capabilityType - Type of capability to change to
+		
+	Returns: n/a
+**)
+to editDomainConfigItemDefinition capabilityType
+	if ImageFound(text:"Edit Domain Configuration Item Definition", ignoreSpaces:Y, Ignorecase:Y,SearchRectangle:ORNScreen.scale(.55, .05, 85, .2), WaitFor:10) then
+		click FoundImageLocation()
+	end if	
+	click "Bandu/DropDown_Type"	
+	Click text:capabilityType, validCharacters:"*", SearchRectangle:ORNScreen.scale(.1, .5, .3, .7), WaitFor:ORNInterval.medium	
+	Click text:"Update Domain configuration item definition", validCharacters:"*", SearchRectangle:ORNScreen.scale(.005, .55, .3, .7), WaitFor:10		
+end editDomainConfigItemDefinition		
+
+(**
+	Handler: 
+		DomainConfigItemDefinitions.deleteDomainConfigItemDefinition
+	
+	Description: 
+		Delete capability definition 
+	
+	Parameters: n/a
+		
+	Returns: n/a
+**)
+to deleteDomainConfigItemDefinition
+	Click text:"Delete Domain Configuration Item Definition", SearchRectangle:ORNScreen.scale(.55, .05, 85, .2), WaitFor:10
+	CapabilityDefinitions.confirmDeleteCapDefinition
+end deleteDomainConfigItemDefinition
+
+(**
+	Handler: 
+		DomainConfigItemDefinitions.destroyDomainConfigItem  domConfigItemName
+	
+	Description: 
+		Destroy domain configuration item for re-running the test with same names. 
+	
+	Parameters:
+		domConfigItemName - Name of domain configuration item.
+				
+	Returns: n/a
+**)
+to destroyDomainConfigItem domConfigItemName
+	DomainConfigItemDefinitions.navigateToDomainConfigItemDefinitions
+	BanduUtil.applyFilter KEY,Contains, domConfigItemName
+	BanduUtil.viewEditDeleteSummaryOptions domConfigItemName, "Delete"
+end destroyDomainConfigItem
+

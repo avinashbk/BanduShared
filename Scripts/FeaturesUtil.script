@@ -1,0 +1,162 @@
+﻿(**
+	Handler: 
+		FeaturesUtil.createFeature(key, name, featureDescription, technicalDescription)
+	
+	Description: 
+                 Clicks on the any of label field and enters the value
+	
+	Parameters:
+		key - Parameter set for the field key
+		name- Parameter set for the field name
+                featureDescription - Parameter set for the field featureDescription
+                technicalDescription - Parameter set for the field technicalDescription
+		 
+	Returns: n/a
+**)
+to createFeature key,name,featureDescription,technicalDescription
+	BanduUtil.enterFieldValue "Key Name", key
+	BanduUtil.enterFieldValue "Display Name", name
+	BanduUtil.enterFieldValue "Enter Feature Description", featureDescription
+	BanduUtil.enterFieldValue "Enter Technical Description", technicalDescription
+	TypeText pageDown
+	click ImageLocation(text:"Package Required")+(210,0)
+	click ImageLocation(text:"Build Required")+(210,0)
+	click text:"Select toggle type for tracking purposes", IgnoreSpaces:"Yes"
+	click text:"Client Toggle is planned"
+	click "Button_Save"
+end createFeature
+
+(**
+	Handler: 
+		BanduUtil.projectSize(projectSizeVal)
+	
+	Description: 
+                 Selects a particular project size
+	
+	Parameters:
+		projectSizeVal - project size value
+		 
+	Returns: n/a
+**)
+to projectSize projectSizeVal
+	click ImageLocation(text:projectSizeVal)+(-30,0)
+end projectSize
+
+(**
+	Handler: 
+		BanduUtil.getAssociatedDate(projectSizeVal)
+	
+	Description: 
+                 Displays activated date as per selected project size
+	
+	Parameters:
+		projectSizeVal - project size value
+		 
+	Returns:
+		currentDate - current date retrieved as per the project size
+**)
+to getAssociatedDate projectSizeVal
+	set currentDate to the international date
+	if projectSizeVal equals "Small"
+		set currentDate to currentDate + 30 days
+	else if projectSizeVal equals "Medium"
+		set currentDate to currentDate + 60 days
+	else if projectSizeVal equals "Large"
+		set currentDate to currentDate + 90 days
+	end if
+	log "current formatted date is "&currentDate
+	return currentDate
+end getAssociatedDate
+
+(**
+	Handler: 
+		FeaturesUtil.createTenant(tenantKey, tenantName, tenantDescription)
+	
+	Description: 
+                 Clicks on the any of label field and enters the value
+	
+	Parameters:
+		tenantKey - Parameter set for the field key
+		tenantName- Parameter set for the field name
+                tenantDescription - Parameter set for the field Description		 
+	Returns: n/a
+**)
+to createTenant tenantKey, tenantName, tenantDescription
+	Click text:"Tenants", SearchRectangle: ORNScreen.scale(0, .05, 1, .2)
+	Click text:"New Tenant", SearchRectangle:ORNScreen.scale(.7,0,1,.3)
+	WaitFor 30, text:"Key"
+	BanduUtil.enterFieldValue "Key", tenantKey
+	BanduUtil.enterFieldValue "Name", tenantName
+	BanduUtil.enterFieldValue "Description", tenantDescription
+	Click text:"Create Tenant",SearchRectangle:ORNScreen.scale(0,.7,.5,1), waitfor:30
+end createTenant
+
+(**
+	Handler:
+		 FeaturesUtil.createChildTenant(parentTenantName, tenantKey, tenantName, tenantDescription)
+
+	Description:
+                  Selects parent from the Parent Drop Down
+
+	Parameters:
+                  parentTenantName - Parameter set for the field Parent
+	          tenantKey - Parameter set for the field key
+		  tenantName- Parameter set for the field name
+                  tenantDescription - Parameter set for the field Description		 
+	Returns: n/a
+**)
+to createChildTenant parentTenantName, tenantKey, tenantName, tenantDescriptiont
+	Click text:"Tenants", SearchRectangle: ORNScreen.scale(0, .05, 1, .2)
+	Click text:"New Tenant", SearchRectangle:ORNScreen.scale(.7,0,1,.3)
+	WaitFor ORNInterval.long, text :"New Tenant"
+	wait 5 seconds // Required to render the view.
+	Click text:"Parent"
+	TypeText Return
+	TypeText parentTenantName
+	TypeText returnKey
+	BanduUtil.enterFieldValue "Key", tenantKey
+	BanduUtil.enterFieldValue "Name", tenantName
+	BanduUtil.enterFieldValue "Description", tenantDescription
+	Click text:"Create Tenant",SearchRectangle:ORNScreen.scale(0,.7,.5,1), waitfor:30
+end createChildTenant
+
+(**
+	Handler: 
+		FeaturesUtil.deleteTenant(tenantKey)
+	Description: 
+                 Deletes a tenant based on the tenantKey
+	Parameters:
+		tenantKey - Parameter set for the field key
+	Returns: n/a
+**)
+
+to deleteTenant tenantKey
+	Click text:"Tenants", SearchRectangle: ORNScreen.scale(0, .05, 1, .2), waitfor: ORNInterval.medium
+	BanduUtil.applyFilter "Key", "Equals", tenantKey
+	click text:"Delete",SearchRectangle:ORNScreen.scale(.5,0,1,.4)
+end deleteTenant
+
+(**
+	Handler: 
+		FeaturesUtil.deleteFeature(featureName)
+	
+	Description: 
+             Delete the feature
+	
+	Parameters:
+		featureName - Name of the feature has to be deleted
+	 
+	Returns: n/a
+**)
+to deleteFeature featureName
+	set tabsAreaSR to ORNScreen.scale(0, .05, 1, .2)
+	Click text:"Features",SearchRectangle: tabsAreaSR
+	WaitFor 10, text:"Feature Administration"
+	BanduUtil.applyFilter "Key", "Equals", "Feature-Test"
+	Click text:"Clear Filters", SearchRectangle:ORNScreen.scale(.7, 0, 1, 1)
+	BanduUtil.applyFilter "Key","Equals", "Feature-Test"
+	assert that ImageFound(30, text:"YES",DPI:"20", EnhanceLocalContrast:"Yes", EnableAggressiveTextExtraction:"Yes", SearchRectangle:BanduUtil.getColumnSrchArea("Client Viewable"))
+	Click text:"Delete",SearchRectangle: BanduUtil.getDomainSummaryRowSearchArea(featureName)
+	assert that ImageFound(maxWaitTime,text:testData.featureDelPopup,SearchRectangle:ORNScreen.scale(.3,0,.8,.3))
+	click "Button_OK"
+end deleteFeature

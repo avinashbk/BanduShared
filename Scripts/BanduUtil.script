@@ -1,0 +1,388 @@
+﻿(**	
+        Handler: 
+		BanduUtil.enterFieldValue(field, value)
+	
+	Description: 
+		Clicks on the any of label field and enters the value
+	
+	Parameters:
+		field - Name of field
+	       value - Data for the particular field
+
+	Returns: n/a
+**)
+to enterFieldValue field, value
+	click ImageLocation(text:field,SearchRectangle:ORNScreen.scale(0,0,.5,1))+(700,0)
+	TypeText value
+end enterFieldValue
+
+(**
+	Handler: 
+		BanduUtil.selectDropDownValue( field, value)
+	
+	Description: 
+		Selects the value for the appropriate field.
+	
+	Parameters:
+		field - Name of field
+		value - Data for the particular field
+		 
+	Returns: n/a
+**)
+to selectDropDownValue field, value
+	click ImageLocation(text:field,DPI:"20", SearchRectangle:ORNScreen.scale(0,0.2,.5,1))+(700,0)
+	TypeText value
+	wait 3
+	TypeText returnKey
+end selectDropDownValue
+
+(**
+	Handler: 
+		BanduUtil.banduLogin(username, password)
+	
+	Description: 
+		Accepting input fed as paramters for username and password and performing login action
+ 	
+	Parameters:
+		username - Paramter for username field
+	       password - Paramter for password
+
+	Returns: n/a
+**)
+to banduLogin username, password
+	waitfor 30, text:"Sign in"
+	typetext escapeKey 
+	waitfor 30,text:"Associate Log In"
+	TypeText username, tabKey
+	TypeText password, returnKey
+end banduLogin
+
+(**
+	Handler: 
+		BanduUtil.getDomainSummaryRowSearchArea(domainKey)
+	
+	Description: 
+		Get a corresponding row as per the parameter	
+
+	Parameters:
+		domainKey - parameter which will set the coordinates of that field
+		 
+	Returns:
+		domainRowArea - domain row area retrieved
+**)
+to getDomainSummaryRowSearchArea domainKey
+	if ConnectionInfo().name starts with "Win"
+		log "Setting search area for the summary row of condition" && domainKey && "for Windows device"
+		
+		// Find domain text and store its coordinates
+		set domainLocation to ImageRectangle(text: domainKey,SearchRectangle:ORNScreen.scale(0,0.2,.15,1)) 
+		
+		// Based on domain text coordinates, calculate location of the domain row and return value
+		set domainRowArea to (domainLocation.x, domainLocation.top - 10, RemoteScreenSize().x, domainLocation.bottom +30)
+		log "Coordinates for Domain row area:" && domainRowArea
+		return domainRowArea	
+	end if
+end getDomainSummaryRowSearchArea
+
+(**
+	Handler: 
+		BanduUtil.applyFilter(filterName, filterValue, filterText)
+	
+	Description: 
+                 Selects contents from a dropdown and based on the content will gives a filtered values
+	
+	Parameters:
+		    filterName - Username to be filtered
+                 filterValue - Fields in the dropdown
+                 filterText - Values which has to be entered in the text filed
+		 
+	Returns: n/a
+**)
+
+to applyFilter filterName, filterValue, filterText
+	set filterSRArea to ORNScreen.scale(.7, 0, 1, 1)
+	if filterName is not equal to "Domain"
+		if filterValue equals "Contains"
+			click text:filterName,SearchRectangle:filterSRArea
+		else
+			click ImageLocation(text:filterName,SearchRectangle:filterSRArea) +(5,25)
+			click text:filterValue,SearchRectangle:filterSRArea
+			click text:filterName,SearchRectangle:filterSRArea
+		end if
+		KeyDown ControlKey, "a"
+		KeyUp ControlKey
+		TypeText filterText
+		TypeText returnKey
+		waitfor 30, text :"Search Status:"
+	else
+		wait ORNInterval.small
+		click ImageLocation(text:filterName,SearchRectangle:filterSRArea) +(5,25)
+		TypeText filterText, returnKey
+		Wait ORNInterval.small
+		Click Image:"Bandu/Features/Button_Filter", SearchRectangle:filterSRArea, WaitFor:ORNInterval.medium
+		waitfor 30, text :"Search Status:"
+	end if
+end applyFilter
+
+(**
+	Handler: 
+		BanduUtil.changeUserRole(userName,role)
+	
+	Description: 
+                To edit a user's role
+	
+	Parameters:
+		userName - name of the user you want to edit
+		role - role of the user
+
+	Returns: n/a
+**)
+
+to changeUserRole userName,role
+	click text:"Users", SearchRectangle:ORNScreen.scale(.09, .070, 0.12, .12)
+	wait 5
+	click text:"USERNAME", SearchRectangle:ORNScreen.scale(.70, .32, 1, .50)
+	wait 5
+	typetext userName,returnkey
+	wait 5
+	click text:"Edit", SearchRectangle:ORNScreen.scale(.60, 1, 1, .13)
+	assert that ImageFound(30,text:role,DPI:"200", EnableAggressiveTextExtraction:"Yes")
+	click FoundImageLocation()
+	click "Button_Create_User/UpdateUser"
+	assert that ImageFound(30,text:"User was successfully updated") 
+end changeUserRole
+
+(**
+	Handler: 
+		BanduUtil.deleteUser(userName)
+	
+	Description: 
+                 Displays a popup for delete when trying to delete a user, user will be deleted from the database
+	
+	Parameters:
+		userName - name of the user you want to delete
+		 
+	Returns: n/a
+**)
+
+to deleteUser userName
+	click text:"Users", SearchRectangle:ORNScreen.scale(.09, .070, 0.18, .18)
+	waitfor 30, text :"USERNAME"
+	click text:"USERNAME", SearchRectangle:ORNScreen.scale(.70, .32, 1, .50)
+	typetext userName
+	typeText returnkey
+	click text:"Delete", SearchRectangle:ORNScreen.scale(.60, 1, 1, .13)
+	assert that ImageFound(text:"OK",SearchRectangle:ORNScreen.scale(.30, .10, 1, .23))
+	click FoundImageLocation()
+	waitfor 30, text:"User was successfully destroyed"
+	assert that ImageFound(text:"User was successfully destroyed",SearchRectangle:ORNScreen.scale(0, .10, 1, .23)) 
+	waitfor 30, text:"Clear Filters"
+	click text:"Clear Filters", SearchRectangle:ORNScreen.scale(.99, .50, 0.88, .60)
+end deleteUser
+
+(**
+	Handler: 
+		BanduUtil.getYmlFile(fileName)
+	
+	Description: 
+   	 	If file doesnt exist save it else cancel if file exists
+	
+	Parameters:
+		fileName - name of the file to be selected
+		 
+	Returns: n/a
+**)
+to getYmlFile fileName
+	typetext controlKey & "s"
+	waitFor 5, text: "Save As"
+	Click (Text:"Desktop", DPI:"200")
+	set saveAsLoc to ImageRectangle(text:"Save As",textDifference:0).bottomLeft +(-10,0)
+	set srchArea to (saveAsLoc,RemoteScreenSize())
+	Click imagelocation(Text:"Save as", CaseSensitive:"Yes", WaitFor:8,SearchRectangle:srchArea)+(100,0)
+	Click (Text:"All Files", DPI:"200", EnableAggressiveTextExtraction:"Yes", ValidWords:"All Files", WaitFor:8)
+	set srchForYml to ORNScreen.scale(.38, .06, .7,.54) 
+	if ImageFound(text:fileName,SearchRectangle:srchForYml)
+		Click text:"Cancel", SearchRectangle:srchArea
+	else
+		Click text:fileName, SearchRectangle:srchArea
+		TypeText Backspace
+		TypeText fileName
+		wait 5// To load File
+		TypeText returnKey
+	end if
+	wait 10// To load next File
+end getYmlFile
+
+(**
+	Handler: 
+        	BanduUtil.scrollDownToImage(ImageName)
+
+   	Description: 
+          	Scrolls down to image in page.	
+
+   	Parameters:
+        	ImageName - Name of the image to scroll should happen.
+
+	Returns: n/a
+**)
+to scrollDownToImage imageName
+	Repeat 7 times
+		ScrollWheelDown 10
+		if imagefound(imageName)
+			exit repeat
+		end if
+		if repeatIndex equals 7
+			Log "Image" & imageName & "not found"
+		end if
+	End repeat
+end scrollDownToImage
+
+(**
+	Handler: 
+		BanduUtil.switchTab
+	
+	Description: 
+      	Sets a search area wrt column name passed
+	
+	Parameters: n/a
+
+	Returns: n/a
+**)
+to switchTab
+	KeyDown controlKey
+	Typetext tabKey
+	Keyup controlKey
+end switchTab
+
+(**
+	Handler: 
+		BanduUtil.getColumnSrchArea(columnName)
+	
+	Description: 
+                Sets a search area wrt column name passed
+
+	Parameters:
+		columnName - Field passed for search area setup
+
+	Returns: 
+		searchArea
+**)
+to getColumnSrchArea columnName
+	set x1y1 to (ImageRectangle(text:columnName).bottomLeft)+(-30,0)
+	set x2y2 to FoundImageLocation()+(80,800)
+	set searchArea to (x1y1,x2y2)
+	return searchArea
+end getColumnSrchArea
+
+(**
+	Handler: 
+		BanduUtil.viewEditDeleteSummaryOptions itemName, option
+	
+	Description: 
+		View or Edit or Delete all bandu items from thier respective summary page - Required to navigate the particular summary items page. 
+		Ex: Capability definitions. Note: Filtering for item prior to use  is recommended.
+	
+	Parameters:
+		itemName - Name of the item to view/edit/delete.
+		option - view/edit/delete
+		
+	Returns: n/a
+**)
+to viewEditDeleteSummaryOptions itemName, option	
+	try
+		click text: option, validCharacters:"*", SearchRectangle:(BanduUtil.getDomainSummaryRowSearchArea (itemName))
+		if option ="Delete" then CapabilityDefinitions.confirmDeleteCapDefinition
+	catch exception		
+		Log " Bandu item not found"	
+	end try	
+end viewEditDeleteSummaryOptions
+
+(**
+	Handler: 
+		BanduUtil.selectDeleteFeature(itemName)
+	
+	Description: 
+		to delete selected element
+	
+	Parameters:
+		itemName - Name of the item to delete.
+		
+	Returns: n/a
+**)
+to selectDeleteFeature itemName
+	set userRec to imageRectangle(text:itemName)+ (0, -20, 0, 20)
+	set the first item in userRec to ConnectionInfo().ScreenSize.x
+	click text:"Delete", SearchRectangle:userRec
+end selectDeleteFeature
+
+(**
+	Handler: 
+		BanduUtil.assertFieldValues(imageLabel, expectedValue)
+	
+	Description: 
+		Finds an image of a label and then expands the searchRectangleto read all the text then comapres the readText to the expected Value of that label
+	
+	Parameters:
+		imageLabel - the image of where the label, so we can get a suitable readText
+		expectedValue - the value we are trying to assert for the specfic label
+			 
+	Returns: n/a
+**)
+to assertFieldValues imageLabel, expectedValue
+	put ImageLocation(imageLabel) into referenceImage
+	Set top to y(referenceImage)-(15)
+	Set bottom to y(referenceImage)+(15)
+	Set the SearchRectangle to (0,top,x(RemoteScreenSize()),bottom)
+	Put ReadText(the SearchRectangle) into detailsValue
+	put imageLabel into field
+	Split field by "/"
+	Set field to the last item of field
+	if field contains "_HotSpot"
+		delete "_HotSpot" from field
+	end if
+	Repeat until field does not contain "_"
+		delete first character of field	
+	End Repeat
+	If detailsValue contains expectedValue
+		LogSuccess field&&"matches the expected value:"&&expectedValue
+	else
+		LogError field&&"did not match the expected value. The expected values was:"&&expectedValue
+		Log field&"'s incorrect value was"&&detailsValue
+	End If
+	Set the SearchRectangle to ()
+end assertFieldValues
+
+(**
+	Handler: 
+		BanduUtil.tenantCleanup tenantsKeys
+	
+	Description: 
+		Removed un-needed tenant keys
+	
+	Parameters:
+		tenantsKeys - list of tenant keys to cleanup
+			 
+	Returns: n/a
+**)
+to tenantCleanup
+	Log "Tenant Clean Up"
+	Click "Bandu/Header/Tab_Tenants"
+	Repeat with each item currentTenant of cleanUpTenants
+		Click "Bandu/Utilities/TableControls/FilterOptions/Label_Filter_Key_HotSpot"
+		TypeText currentTenant
+		Click "Bandu/Utilities/TableControls/FilterOptions/Button_Filter"
+		if ImageFound("Bandu/Tenants/Label_NoTenantsFound")
+			Click "Bandu/Header/Tab_Tenants/Tab_Tenants_Selected"
+			Log currentTenant&&"is set up correctly"
+		else
+			if ImageFound(text:currentTenant)
+				Click "Bandu/Utilities/TableControls/Link_Delete"
+				Click "Bandu/Utilities/WarningMessages/Button_OK"
+				Assert that imagefound("Bandu/Tenants/Label_TenantWasSuccessfullyDestroyed")
+				Log currentTenant&&"was destroyed successfully"
+			else
+				LogWarning "Unable to delete"&&currentTenant&&"in the Tenant Table"
+			End if
+		end if
+	End repeat
+end tenantCleanup

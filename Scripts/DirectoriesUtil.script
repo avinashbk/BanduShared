@@ -1,0 +1,194 @@
+﻿
+(**
+	Handler:
+		DirectoriesUtil.navigateToDirectoryTypes
+
+	Description:
+		To navigate to directory-types view by clicking Orion Directories on the menu.
+
+	Parameters: n/a
+
+	Returns: n/a
+**)
+to navigateToDirectoryTypes
+	Click text:"Orion Directories"
+	Click text:"Directory Types", SearchRectangle:ORNScreen.scale(.38, .05, .55, .2), TextDifference: 1
+	waitfor ORNInterval.medium, text:"Directory Types"
+end navigateToDirectoryTypes
+
+(**
+	Handler:
+		DirectoriesUtil.createDirectoryType(keyVal, descriptionVal)
+
+	Description:
+		This handler creates a directory-type.
+
+	Parameters:
+		keyVal - Parameter set for the field key
+		descriptionVal - Parameter set for the field description
+
+	Returns: n/a
+**)
+to createDirectoryType keyVal, descriptionVal
+	DirectoriesUtil.navigateToDirectoryTypes
+	Click text:"New Directory Type", SearchRectangle:ORNScreen.scale(.8, 0, 1, .3)
+	BanduUtil.enterFieldValue "Key", keyVal
+	BanduUtil.enterFieldValue "Description", descriptionVal
+	TypeText returnKey
+	TypeText pageDown
+	Click text:"Create Directory type",SearchRectangle:ORNScreen.scale(0,.4,.5,1), waitfor:ORNInterval.medium
+end createDirectoryType
+
+(**
+	Handler:
+		DirectoriesUtil.editDirectoryType(key, definition)
+
+	Description:
+        Edits a created directory-type
+
+	Parameters:
+	    key - directory type key
+		description -  definition to be entered
+
+	Returns: n/a
+**)
+to editDirectoryType key, description
+	DirectoriesUtil.navigateToDirectoryTypes
+	BanduUtil.applyFilter "Key", "Contains", key
+	click text:"Edit",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	BanduUtil.enterFieldValue "Description", description
+	Click text:"Update Directory type",SearchRectangle:ORNScreen.scale(0,.4,.5,1), waitfor:ORNInterval.medium
+end editDirectoryType
+
+(**
+	Handler:
+		DirectoriesUtil.deleteDirectoryType(directoryTypeKey)
+
+	Description:
+          	Displays a popup for delete when trying to delete a directory-type.
+
+	Parameters:
+		directoryTypeKey - name of the condition for which rectangle would be set in summary view
+
+	Returns: n/a
+**)
+to deleteDirectoryType Key
+	DirectoriesUtil.navigateToDirectoryTypes
+	BanduUtil.applyFilter "Key", "Contains", key
+	click text:"Delete",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	waitfor ORNInterval.medium, image:"Button_OK" ,SearchRectangle:ORNScreen.scale(.3,0,.7,.4)
+	click "Button_OK"
+end deleteDirectoryType
+
+
+(**
+	Handler:
+		DirectoriesUtil.navigateToDirectories
+
+	Description:
+		To navigate to directories view by clicking Orion Directories on the menu.
+
+	Parameters: n/a
+
+	Returns: n/a
+**)
+to navigateToDirectories
+	Click text:"Orion Directories"
+	Click text:"Directories", SearchRectangle:ORNScreen.scale(.38, .1, .55, .2)
+	waitfor ORNInterval.medium, text:"Directories"
+end navigateToDirectories
+
+(**
+	Handler:
+		DirectoriesUtil.createDirectory(directoryTypeKey, descriptionVal, value)
+
+	Description:
+		This handler creates a directory.
+
+	Parameters:
+		directoryTypeKey - Parameter set for the field directory-type
+		descriptionVal - Parameter set for the field description
+		value - Parameter set for the field value
+
+	Returns: n/a
+**)
+to createDirectory directoryTypeKey, description, value
+	DirectoriesUtil.navigateToDirectories
+	Click text:"New Directory", SearchRectangle:ORNScreen.scale(.7, 0, 1, .3)
+	wait 4 seconds // Required to render the view.
+	BanduUtil.enterFieldValue "Directory Type", directoryTypeKey
+	wait 4 seconds // Required to retrieve directory-types.
+	TypeText returnKey
+	wait 4 seconds // Required to load the selected directory-type.
+	BanduUtil.enterFieldValue "Value", value
+	BanduUtil.enterFieldValue "Description", description
+	Click text:"Create Directory",SearchRectangle:ORNScreen.scale(0,.4,.5,1), waitfor:ORNInterval.medium
+end createDirectory
+
+(**
+	Handler:
+		DirectoriesUtil.applyFilterOnDirectory(directoryTypeKey, descriptionVal, value)
+
+	Description:
+		This handler filters a directory.
+
+	Parameters:
+		directoryTypeKey - Parameter set for the field directory-type
+		descriptionVal - Parameter set for the field description
+
+	Returns: n/a
+**)
+to applyFilterOnDirectory directoryTypeKey, directoryKey
+	click imagelocation(text:"DIRECTORY TYPE",SearchRectangle:ORNScreen.scale(.83,.22,1,1))+(0,10)
+	TypeText directoryTypeKey
+	TypeText returnKey
+	BanduUtil.applyFilter "Key", "Equals", directoryKey
+end applyFilterOnDirectory
+
+(**
+	Handler:
+		DirectoriesUtil.editDirectory(directoryTypeKey, descriptionVal, value)
+
+	Description:
+		This handler edits a directory.
+
+	Parameters:
+		directoryTypeKey - Parameter set for the field directory-type
+		descriptionVal - Parameter set for the field description
+		value - Parameter set for the field value
+
+	Returns: n/a
+**)
+to editDirectory directoryTypeKey, directoryKey, description, value
+	DirectoriesUtil.navigateToDirectories
+	applyFilterOnDirectory directoryTypeKey, directoryKey
+	click text:"Edit",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	wait 4 seconds // Required to render the view.
+	BanduUtil.enterFieldValue "Directory Type", directoryTypeKey
+	TypeText returnKey
+	wait 4 seconds // Required to load the selected directory-type.
+	BanduUtil.enterFieldValue "Description", description
+	Click text:"Update Directory",SearchRectangle:ORNScreen.scale(0,.4,.5,1), waitfor:ORNInterval.medium
+end editDirectory
+
+(**
+	Handler:
+		DirectoriesUtil.deleteDirectory(directoryTypeKey, directoryKey)
+
+	Description:
+		This handler edits a directory.
+
+	Parameters:
+		directoryTypeKey - Parameter set for the field directory-type
+		descriptionVal - Parameter set for the field description
+		value - Parameter set for the field value
+
+	Returns: n/a
+**)
+to deleteDirectory directoryTypeKey, directoryKey
+	DirectoriesUtil.navigateToDirectories
+	applyFilterOnDirectory directoryTypeKey, directoryKey
+	click text:"Delete",SearchRectangle:ORNScreen.scale(0,.20,1,1)
+	waitfor ORNInterval.medium, image:"Button_OK" ,SearchRectangle:ORNScreen.scale(.3,0,.7,.4)
+	click "Button_OK"
+end deleteDirectory
